@@ -48,7 +48,13 @@ function OtpForm({ title, subtitle }) {
     e.preventDefault()
     setLoading(true)
     setError('')
-    const { error } = await supabase.auth.signInWithOtp({ email, options: { shouldCreateUser: true } })
+    const { error } = await supabase.auth.signInWithOtp({
+      email,
+      options: {
+        shouldCreateUser: true,
+        emailRedirectTo: `${window.location.origin}/app/dashboard`,
+      },
+    })
     if (error) {
       setError(error.message)
     } else {
