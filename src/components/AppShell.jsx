@@ -1,7 +1,19 @@
 import React from 'react'
+import { useNavigate } from 'react-router-dom'
 import { Icons, StatusDot, Avatar } from './atoms'
+import { useAuth } from '../context/AuthContext'
+import { supabase } from '../lib/supabase'
 
 export default function AppShell({ active = 'dashboard', onNav, title, breadcrumb, children, searchPlaceholder = 'Search logs, keys, docs…' }) {
+  const { user } = useAuth()
+  const navigate = useNavigate()
+  const email = user?.email ?? ''
+  const displayName = email.split('@')[0]
+
+  async function signOut() {
+    await supabase.auth.signOut()
+    navigate('/login')
+  }
   const navItems = [
     { id: 'dashboard', label: 'Dashboard', icon: Icons.Home },
     { id: 'keys',      label: 'API Keys',  icon: Icons.Key },
@@ -66,12 +78,14 @@ export default function AppShell({ active = 'dashboard', onNav, title, breadcrum
           </div>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '12px 8px 4px', borderTop: '1px solid var(--border-strong)', marginTop: 12 }}>
-            <Avatar name="Jordan Lee" size={32} />
+            <Avatar name={displayName} size={32} />
             <div style={{ flex: 1, minWidth: 0 }}>
-              <div style={{ fontSize: 13, fontWeight: 500, color: 'var(--text-primary)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>Jordan Lee</div>
-              <div style={{ fontSize: 11, color: 'var(--text-muted)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>jordan@acme.co</div>
+              <div style={{ fontSize: 13, fontWeight: 500, color: 'var(--text-primary)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{displayName}</div>
+              <div style={{ fontSize: 11, color: 'var(--text-muted)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{email}</div>
             </div>
-            <Icons.Chevron size={12} />
+            <button onClick={signOut} title="Sign out" style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)', padding: 4, display: 'flex', borderRadius: 4 }}>
+              <Icons.Chevron size={12} />
+            </button>
           </div>
         </div>
       </aside>

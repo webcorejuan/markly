@@ -1,4 +1,5 @@
 import { Routes, Route, Navigate } from 'react-router-dom'
+import ProtectedRoute from './components/ProtectedRoute'
 import LandingPage from './pages/LandingPage'
 import SignUpPage from './pages/SignUpPage'
 import LoginPage from './pages/LoginPage'
@@ -13,7 +14,14 @@ export default function App() {
       <Route path="/login" element={<LoginPage />} />
       <Route path="/docs" element={<DocsPage />} />
       <Route path="/app" element={<Navigate to="/app/dashboard" replace />} />
-      <Route path="/app/:section" element={<AppPage />} />
+      <Route
+        path="/app/:section"
+        element={
+          <ProtectedRoute>
+            <AppPage />
+          </ProtectedRoute>
+        }
+      />
     </Routes>
   )
 }
