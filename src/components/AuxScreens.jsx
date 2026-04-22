@@ -48,7 +48,13 @@ function OtpForm({ title, subtitle }) {
     e.preventDefault()
     setLoading(true)
     setError('')
-    const { error } = await supabase.auth.signInWithOtp({ email, options: { shouldCreateUser: true } })
+    const { error } = await supabase.auth.signInWithOtp({
+      email,
+      options: {
+        shouldCreateUser: true,
+        emailRedirectTo: `${window.location.origin}/app/dashboard`,
+      },
+    })
     if (error) {
       setError(error.message)
     } else {
@@ -75,21 +81,21 @@ function OtpForm({ title, subtitle }) {
       <>
         <h1 style={{ fontSize: 36, fontWeight: 500, letterSpacing: '-0.02em', marginBottom: 8 }}>Check your email</h1>
         <p style={{ fontSize: 15, color: 'var(--text-muted)', marginBottom: 32 }}>
-          We sent a 6-digit code to <strong style={{ color: 'var(--text-primary)' }}>{email}</strong>
+          We sent a code to <strong style={{ color: 'var(--text-primary)' }}>{email}</strong>
         </p>
         <form onSubmit={verifyOtp}>
           <label style={{ display: 'block', fontSize: 12, color: 'var(--text-muted)', fontWeight: 500, marginBottom: 6 }}>Code</label>
           <input
             className="input"
             value={code}
-            onChange={e => setCode(e.target.value)}
-            placeholder="123456"
-            maxLength={6}
+            onChange={e => setCode(e.target.value.replace(/\D/g, ''))}
+            placeholder="······"
+            maxLength={8}
             autoFocus
             style={{ marginBottom: 20, fontSize: 24, letterSpacing: '0.3em', textAlign: 'center' }}
           />
           {error && <p style={{ fontSize: 13, color: 'var(--danger)', marginBottom: 16 }}>{error}</p>}
-          <button className="btn btn-primary" style={{ width: '100%', justifyContent: 'center', padding: '11px' }} disabled={loading || code.length < 6}>
+          <button className="btn btn-primary" style={{ width: '100%', justifyContent: 'center', padding: '11px' }} disabled={loading || code.length < 4}>
             {loading ? 'Verifying…' : <>Verify <Icons.Arrow size={14} /></>}
           </button>
         </form>
